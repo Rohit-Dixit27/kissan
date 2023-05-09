@@ -7,6 +7,7 @@ import 'package:kissanpay/auth/signup_screen.dart';
 import 'package:kissanpay/auth/verify_code.dart';
 import 'package:kissanpay/home/home_screen.dart';
 import 'package:flutter/src/widgets/icon.dart';
+import 'session_manager.dart';
 import '../utils/utils.dart';
 import 'forgot_password.dart';
 
@@ -33,8 +34,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void login() {
-    loading:
-    loading;
     setState(() {
       loading = true;
     });
@@ -43,6 +42,8 @@ class _LoginScreenState extends State<LoginScreen> {
             email: emailcontroller.text,
             password: passwordcontroller.text.toString())
         .then((value) {
+
+          SessionController().userId = value.user!.uid.toString();
       Utils().toastMessage(value.user!.email.toString());
 
       setState(() {

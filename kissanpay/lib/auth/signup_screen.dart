@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:kissanpay/auth/login_screen.dart';
 import 'package:kissanpay/auth/round_button.dart';
 
 import '../home/home_screen.dart';
+import 'session_manager.dart';
 import '../utils/utils.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -21,6 +23,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final passwordcontroller = TextEditingController();
 
   FirebaseAuth auth = FirebaseAuth.instance;
+  DatabaseReference ref = FirebaseDatabase.instance.ref().child('User');
 
 
   void signup()
@@ -30,9 +33,28 @@ class _SignupScreenState extends State<SignupScreen> {
     });
     auth.createUserWithEmailAndPassword(email: emailcontroller.text.toString(),
         password: passwordcontroller.text.toString()).then((value){
-      setState(() {
-        loading = false;
-      });
+
+      SessionController().userId = value.user!.uid.toString();
+
+
+      ref.child(value.user!.uid.toString()).set({
+            'uid' : value.user!.uid.toString(),
+            'email' : value.user!.email.toString(),
+            'phone' : '',
+            'name' : '',
+            'profile' : ''
+          }).then((value){
+            setState(() {
+              loading = false;
+            });
+
+          }).onError((error, stackTrace){
+            Utils().toastMessage(error.toString());
+            setState(() {
+              loading = false;
+            });
+          });
+
       Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
 
     }).onError((error, stackTrace){

@@ -1,8 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:kissanpay/auth/login_screen.dart';
 
-import '../utils/utils.dart';
+import 'package:flutter/material.dart';
+import 'package:kissanpay/Hom.dart';
+import 'package:kissanpay/history.dart';
+import 'package:kissanpay/mall.dart';
+import 'package:kissanpay/profile/profile.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -12,25 +13,31 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final auth = FirebaseAuth.instance;
+
+  var _screens = [ HomScreen(), MallScreen(), HistoryScreen(), ProfileScreen() ];
+  int _selecteditem = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text('Home'),
-        actions: [
-          IconButton(onPressed: (){
-            auth.signOut().then((value){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
-            }).onError((error, stackTrace){
-              Utils().toastMessage(error.toString());
-            });
-          },
-              icon: Icon(Icons.logout_outlined),),
-          SizedBox(width: 10,)
+      body: Center(
+        child: _screens[_selecteditem],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.home, color: Colors.black,), label: "Home"),
+          BottomNavigationBarItem(icon: Icon(Icons.shop, color: Colors.black,), label: "Mall"),
+          BottomNavigationBarItem(icon: Icon(Icons.history, color: Colors.black,), label: "History"),
+          BottomNavigationBarItem(icon: Icon(Icons.person, color: Colors.black,), label: "Profile"),
+
         ],
+        currentIndex: _selecteditem,
+        onTap: (setValue){
+          setState(() {
+            _selecteditem = setValue;
+          });
+
+        },
       ),
     );
   }
