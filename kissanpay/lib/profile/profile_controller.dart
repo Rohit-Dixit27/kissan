@@ -14,6 +14,7 @@ class ProfileController with ChangeNotifier{
 
   final namecontroller = TextEditingController();
   final phonecontroller = TextEditingController();
+  final emailcontroller  = TextEditingController();
 
   DatabaseReference ref = FirebaseDatabase.instance.ref().child('User');
   firebase_storage.FirebaseStorage storage = firebase_storage.FirebaseStorage.instance;
@@ -175,6 +176,40 @@ class ProfileController with ChangeNotifier{
                   "phone" : phonecontroller.text.toString()
                 }).then((value){
                   phonecontroller.clear();
+                });
+                Navigator.pop(context);
+              }, child: Text("ok"))
+            ],
+          );
+        });
+  }
+
+  Future<void> showUserEmailDialogAlert(BuildContext context, String email){
+    emailcontroller.text = email;
+    return showDialog(context: context,
+        builder: (context){
+          return AlertDialog(
+            title: Text("update email"),
+            content: SingleChildScrollView(
+              child: Column(
+                children: [
+                  TextFormField(
+                    controller: emailcontroller,
+                    keyboardType: TextInputType.text,
+                  )
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(onPressed: (){
+                Navigator.pop(context);
+              }, child: Text("cancel")),
+              TextButton(onPressed: (){
+
+                ref.child(SessionController().userId.toString()).update({
+                  "email" : emailcontroller.text.toString()
+                }).then((value){
+                  emailcontroller.clear();
                 });
                 Navigator.pop(context);
               }, child: Text("ok"))
